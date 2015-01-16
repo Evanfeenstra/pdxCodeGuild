@@ -3,6 +3,7 @@ import time
 import random
 
 win = GraphWin("My Circle", 800, 800)
+thewin = False
 
 def gen_random_color():
 	return "#%0.2X%0.2X%0.2X" % (random.randint(1, 245), random.randint(1, 245), random.randint(1, 245))
@@ -16,6 +17,8 @@ def lose():
 	t.draw(win)
 
 def you_win():
+	global thewin
+	thewin = True
 	r3 = Rectangle(Point(0,0), Point(800,800))
 	r3.setFill('#000000')
 	r3.draw(win)
@@ -30,9 +33,11 @@ def main():
 	c.setFill(coloryo)
 	c.draw(win)
 	size = 1
+	score = 0
+	scorey = Text(Point(700,50), 'score: '+str(score))
+
 
 	r = Rectangle(Point(0, 0), Point(5, 5))
-	r.draw(win)
 
 	p = Polygon(Point(40,50),Point(75,57),Point(63,80))
 	p.draw(win)
@@ -45,10 +50,18 @@ def main():
 		c.setOutline(coloryo)
 		c.setFill(coloryo)
 		c.setWidth(size)
-		size += 1
+		size += 3
 		pointy = c.getCenter()
 		cirx = pointy.getX()
 		ciry = pointy.getY()
+
+		scorey.undraw()
+		scorey = Text(Point(700,50), 'score: '+str(score))
+		scorey.draw(win)
+		score += 1
+
+		if size>32:
+			you_win()
 
 		#if cirx-recx<20:
 		r.undraw()
@@ -91,15 +104,10 @@ def main():
 				p.move(0,1)
 			if poly+5>ciry:
 				p.move(0,-1)
-			if poly+5 == ciry and polx-15 == cirx:
-				lose()
-
-			if size>2:
-				you_win()
-
+			if abs(poly+5-ciry)<20 and abs(polx-15-cirx)<20:
+				if thewin==False:
+					lose()
+		
 			time.sleep(.01)
-		#c.draw(win)
-
-
 
 main()
